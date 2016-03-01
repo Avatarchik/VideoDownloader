@@ -1,9 +1,12 @@
 package org.darkerthanblack.videodownloader;
 
+import android.util.Log;
+
 import org.darkerthanblack.videodownloader.entity.Bilibili;
 import org.darkerthanblack.videodownloader.entity.Video;
 import org.darkerthanblack.videodownloader.entity.Youku;
 
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -23,7 +26,8 @@ public class Downloader {
         }
 
         if(v!=null){
-            String fileUrl = v.getFileUrl(url,type);
+            List<String> fileUrl = v.getFileUrl(url,type);
+            Log.v("Jay","fileUrl----->"+fileUrl);
         }
 
     }
