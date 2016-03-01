@@ -3,6 +3,7 @@ package org.darkerthanblack.videodownloader.entity;
 import org.darkerthanblack.videodownloader.utils.HttpUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -21,7 +22,7 @@ public class Bilibili implements Video {
     public String getFileUrl(String url ,String type) {
         String result = null;
         String page = HttpUtils.doGet(url);
-        //System.out.println(page);
+        System.out.println(page);
         Matcher matcher = Pattern.compile("cid=(\\d*)").matcher(page);
         if (matcher.find())
         {
@@ -32,7 +33,7 @@ public class Bilibili implements Video {
             String jsonResult = HttpUtils.doGet(videoUrl);
             System.out.println(jsonResult);
             try {
-                JSONArray ja= new JSONArray(jsonResult);
+                JSONObject jsonObject= new JSONObject(jsonResult);
 
             } catch (JSONException e) {
                 e.printStackTrace();

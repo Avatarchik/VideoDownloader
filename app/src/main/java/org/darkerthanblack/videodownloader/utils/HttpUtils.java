@@ -109,6 +109,7 @@ public class HttpUtils
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
             conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
+            conn.setRequestProperty("User-agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/601.4.4 (KHTML, like Gecko) Version/9.0.3 Safari/601.4.4");
             System.out.println(conn.getResponseCode());
             if (conn.getResponseCode() == 200)
             {
