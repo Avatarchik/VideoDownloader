@@ -1,6 +1,8 @@
 package org.darkerthanblack.videodownloader.entity;
 
 import org.darkerthanblack.videodownloader.utils.HttpUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -29,6 +31,12 @@ public class Bilibili implements Video {
             System.out.println(videoUrl);
             String jsonResult = HttpUtils.doGet(videoUrl);
             System.out.println(jsonResult);
+            try {
+                JSONArray ja= new JSONArray(jsonResult);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         return null;
