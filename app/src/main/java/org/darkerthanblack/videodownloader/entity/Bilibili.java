@@ -1,7 +1,5 @@
 package org.darkerthanblack.videodownloader.entity;
 
-import android.util.Log;
-
 import org.darkerthanblack.videodownloader.utils.HttpUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,14 +14,15 @@ import java.util.regex.Pattern;
 /**
  * Created by Jay on 16/3/1.
  */
-public class Bilibili implements Video {
+public class Bilibili implements VideoSite {
     private String baseUrl = "http://interface.bilibili.com/playurl?player=2&sign=5b790eb0d593597d1964425c4d9691df&otype=json";
 
     public Bilibili(){
 
     }
     @Override
-    public List<String> getFileUrl(String url ,String type) {
+    public Video getVideo(String url, String type) {
+        Video v = new Video();
         if(url.contains("mobile")){
             url = "http://www.bilibili.com/video/av"+url.replaceAll("\\D*","");
         }
@@ -34,6 +33,7 @@ public class Bilibili implements Video {
             Matcher matcher = Pattern.compile("cid=(\\d*)").matcher(page);
             if (matcher.find()) {
                 String cid = matcher.group();
+                v.setId(Integer.valueOf(cid.substring(4)));
                 String videoUrl = baseUrl + "&" + cid + "&ts=" + (new Date().getTime() / 1000);
                 //System.out.println(videoUrl);
                 String jsonResult = HttpUtils.doGet(videoUrl);
@@ -64,12 +64,17 @@ public class Bilibili implements Video {
                             result.add(jsonObject.getString("url"));
                         }
                     }
-
+                    v.setFileUrlList(result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
+            matcher = Pattern.compile("<title>.*</title>").matcher(page);
+            if (matcher.find()) {
+                String title = matcher.group().replace("<title>","").replace("</title>","");
+                v.setName(title);
+            }
         }
-        return result;
+        return v;
     }
 }

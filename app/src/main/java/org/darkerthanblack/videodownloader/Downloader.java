@@ -1,39 +1,43 @@
 package org.darkerthanblack.videodownloader;
 
+import android.content.Context;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.axeldroid.Axel;
 
 import org.darkerthanblack.videodownloader.entity.Bilibili;
 import org.darkerthanblack.videodownloader.entity.Video;
+import org.darkerthanblack.videodownloader.entity.VideoSite;
 import org.darkerthanblack.videodownloader.entity.Youku;
 
 import java.io.File;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Created by Jay on 16/3/1.
  */
 public class Downloader {
-    public static void download(String url ,String type){
-
-        Video v = null;
+    public static Video download(Context c,String url ,String type){
+        Axel axel;
+        Video video = null;
+        VideoSite videoSite = null;
         if(url.contains("bilibili")){
         //if(true){
-            v = new Bilibili();
+            videoSite = new Bilibili();
         }else if(url.contains("youku")){
-            v = new Youku();
+            videoSite = new Youku();
         }else {
             System.out.print("Error");
         }
 
-        if(v!=null){
-            List<String> fileUrl = v.getFileUrl(url, type);
-            Log.v("Jay","fileUrl----->"+fileUrl);
+        if(videoSite!=null){
+            video = videoSite.getVideo(url, type);
+            List<String> fileUrl = video.getFileUrlList();
+            Log.v("Jay","video----->"+video);
             if(fileUrl!=null){
-                Axel axel = new Axel() {
+                axel = new Axel() {
                     @Override
                     protected void onProgress() {
                         // TODO Auto-generated method stub
@@ -57,12 +61,13 @@ public class Downloader {
                     }
 
                 };
-                Log.v("Jay", Environment.getExternalStorageDirectory().getPath() + File.separator + "VDtemp/a.flv");
-                File downloadroot = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "VDtemp");
+                File downloadroot = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + PreferenceManager
+                        .getDefaultSharedPreferences(c)
+                        .getString("default_file_location","VD"));
                 if(!downloadroot.exists()){
                     downloadroot.mkdir();
                 }
-                axel.axel_new(Environment.getExternalStorageDirectory().getPath() + File.separator + "VDtemp/a.flv",
+                axel.axel_new(downloadroot + File.separator + "a.flv",
                         new String[]{fileUrl.get(0)});
                 axel.connections = 1;
 
@@ -74,5 +79,6 @@ public class Downloader {
             }
         }
 
+        return video;
     }
 }
