@@ -13,7 +13,7 @@
     tools:context="org.darkerthanblack.videodownloader.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
+    <!--<TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/url"/>
@@ -34,5 +34,5 @@
         android:id="@+id/search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/search"/>
+        android:text="@string/search"/>-->
 </LinearLayout>
