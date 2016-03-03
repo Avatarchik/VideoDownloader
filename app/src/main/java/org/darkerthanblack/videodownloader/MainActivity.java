@@ -51,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                Video v = Downloader.download(MainActivity.this,videoUrlET.getText().toString(),typeET.getText().toString());
+                                Downloader downloader = new Downloader(MainActivity.this,videoUrlET.getText().toString(),typeET.getText().toString());
+                                Video v = downloader.download();
                                 if(v!=null){
                                     videoListAdapter.addItem(v);
                                 }
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         videoListAdapter.setOnItemClickListener(new VideoListAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, Video data) {
-                
+
             }
         });
     }

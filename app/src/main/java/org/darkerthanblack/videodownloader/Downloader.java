@@ -14,12 +14,56 @@ import org.darkerthanblack.videodownloader.entity.Youku;
 
 import java.io.File;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Jay on 16/3/1.
  */
 public class Downloader {
-    public static Video download(Context c,String url ,String type){
+    public static final int STATUS_DOWNLOADING = 0;
+    public static final int STATUS_DOWNLOADED = 1;
+    public static final int STATUS_PAUSE = 2;
+    public static final int STATUS_NEW = 3;
+
+    public int downloadStatus = STATUS_NEW;
+    /**
+     * 已下载字节数
+     */
+    public long bytesDone;
+
+    /**
+     * 文件总大小
+     */
+    public long fileSize;
+
+    /**
+     * 当前下载速度，
+     */
+    public int bytesPerSecond;
+
+    /**
+     * 离下载完成剩下的时间
+     */
+    public int leftSeconds;
+
+    /**
+     * 下载完成消耗的总时间
+     */
+    public int costSeconds;
+
+    public String url;
+    public String type;
+    public Context context;
+
+
+    public Downloader(Context c,String url ,String type){
+        this.context = c;
+        this.url = url;
+        this.type = type;
+    }
+
+    public Video download(){
         Axel axel;
         Video video = null;
         VideoSite videoSite = null;
@@ -35,7 +79,6 @@ public class Downloader {
         if(videoSite!=null){
             video = videoSite.getVideo(url, type);
             List<String> fileUrl = video.getFileUrlList();
-            Log.v("Jay","video----->"+video);
             if(fileUrl!=null){
                 axel = new Axel() {
                     @Override
@@ -62,13 +105,20 @@ public class Downloader {
 
                 };
                 File downloadroot = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + PreferenceManager
-                        .getDefaultSharedPreferences(c)
+                        .getDefaultSharedPreferences(context)
                         .getString("default_file_location","VD"));
                 if(!downloadroot.exists()){
                     downloadroot.mkdir();
                 }
-                axel.axel_new(downloadroot + File.separator + "a.flv",
-                        new String[]{fileUrl.get(0)});
+                String tempFileUrl = fileUrl.get(0);
+                String extName = ".flv";
+                Matcher matcher = Pattern.compile("\\.[a-z0-9]{3,5}(?=\\?)").matcher(tempFileUrl);
+                if (matcher.find()) {
+                    extName = matcher.group();
+                }
+                video.setExtName(extName);
+                axel.axel_new(downloadroot + File.separator + video.getId()+extName,
+                        new String[]{tempFileUrl});
                 axel.connections = 1;
 
                 try {
@@ -78,7 +128,7 @@ public class Downloader {
                 }
             }
         }
-
+        Log.v("Jay","video----->"+video);
         return video;
     }
 }
