@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -24,17 +26,15 @@ import org.darkerthanblack.videodownloader.download.DownloadInfo;
 import org.darkerthanblack.videodownloader.download.DownloadManager;
 import org.darkerthanblack.videodownloader.download.DownloadState;
 import org.darkerthanblack.videodownloader.download.DownloadViewHolder;
-import org.darkerthanblack.videodownloader.entity.Video;
 import org.xutils.common.Callback;
 import org.xutils.ex.DbException;
-import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.logging.LogRecord;
 
 public class MainActivity extends BaseActivity {
     EditText videoUrlET,typeET;
@@ -74,9 +74,9 @@ public class MainActivity extends BaseActivity {
                                     public void run() {
                                         Downloader downloader = new Downloader(MainActivity.this,videoUrlET.getText().toString(),typeET.getText().toString());
                                         downloader.download();
+                                        downloadHandler.sendEmptyMessage(1);
                                     }
                                 }).start();
-                                downloadList.deferNotifyDataSetChanged();
 
                             }
                 })
@@ -300,5 +300,16 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
+
+    public Handler downloadHandler = new Handler(){
+        public void handleMessage(Message msg){
+            super.handleMessage(msg);
+            switch (msg.what){
+                case 1:
+                    downloadListAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    };
 
 }
