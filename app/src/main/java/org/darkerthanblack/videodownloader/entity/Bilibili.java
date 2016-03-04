@@ -21,7 +21,7 @@ public class Bilibili implements VideoSite {
 
     }
     @Override
-    public Video getVideo(String url, String type) {
+    public Video getVideo(String url, int type) {
         Video v = new Video();
         if(url.contains("mobile")){
             url = "http://www.bilibili.com/video/av"+url.replaceAll("\\D*","");
@@ -44,24 +44,31 @@ public class Bilibili implements VideoSite {
                         JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
                         //System.out.println("Nub------"+i+"-------"+jsonObject);
                         JSONArray tempUrl = jsonObject.getJSONArray("backup_url");
-                        if("s".equals(type)){
-                            if(null!=tempUrl){
-                                result.add(tempUrl.get(0).toString());
-                            }else{
-                                result.add(jsonObject.getString("url"));
-                            }
-                        }else if("h".equals(type)){
-                            if(null!=tempUrl) {
-                                if (tempUrl.length() > 1) {
-                                    result.add(tempUrl.get(1).toString());
-                                } else {
+                        switch (type){
+                            case VideoType.S:
+                                if(null!=tempUrl){
                                     result.add(tempUrl.get(0).toString());
+                                }else{
+                                    result.add(jsonObject.getString("url"));
                                 }
-                            }else {
+                                break;
+                            case VideoType.HD:
+                                if(null!=tempUrl) {
+                                    if (tempUrl.length() > 1) {
+                                        result.add(tempUrl.get(1).toString());
+                                    } else {
+                                        result.add(tempUrl.get(0).toString());
+                                    }
+                                }else {
+                                    result.add(jsonObject.getString("url"));
+                                }
+                                break;
+                            case VideoType.N:
                                 result.add(jsonObject.getString("url"));
-                            }
-                        }else{
-                            result.add(jsonObject.getString("url"));
+                                break;
+                            default:
+                                result.add(jsonObject.getString("url"));
+                                break;
                         }
                     }
                     v.setFileUrlList(result);
@@ -71,7 +78,7 @@ public class Bilibili implements VideoSite {
             }
             matcher = Pattern.compile("<title>.*</title>").matcher(page);
             if (matcher.find()) {
-                String title = matcher.group().replace("<title>","").replace("</title>","");
+                String title = matcher.group().replace("<title>","").replace("</title>", "");
                 v.setName(title);
             }
         }

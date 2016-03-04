@@ -25,10 +25,10 @@ import java.util.regex.Pattern;
 public class Downloader {
 
     public String url;
-    public String type;
+    public int type;
     public Context context;
 
-    public Downloader(Context c,String url ,String type){
+    public Downloader(Context c,String url ,int type){
         this.context = c;
         this.url = url;
         this.type = type;
@@ -45,7 +45,7 @@ public class Downloader {
         }else {
             System.out.print("Error");
         }
-
+        Log.v("Jay","videoType----->"+type);
         if(videoSite!=null){
             video = videoSite.getVideo(url, type);
             List<String> fileUrl = video.getFileUrlList();

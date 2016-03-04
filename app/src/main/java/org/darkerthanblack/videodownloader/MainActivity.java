@@ -14,11 +14,13 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,11 +36,9 @@ import org.xutils.x;
 
 import java.io.File;
 
-import java.util.logging.LogRecord;
-
 public class MainActivity extends BaseActivity {
-    EditText videoUrlET,typeET;
-    //Button searchBtn;
+    EditText videoUrlET;
+    Spinner videoType;
     private ListView downloadList;
 
     private DownloadManager downloadManager;
@@ -58,48 +58,34 @@ public class MainActivity extends BaseActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
                 LayoutInflater inflater = getLayoutInflater();
                 final View layout = inflater.inflate(R.layout.new_video_url, null);
+                videoUrlET = (EditText) layout.findViewById(R.id.video_url);
+                videoType = (Spinner) layout.findViewById(R.id.video_type);
+                ArrayAdapter <CharSequence>typeAdapter = ArrayAdapter.createFromResource(MainActivity.this, R.array.type_array, android.R.layout.simple_spinner_item);
+                typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                videoType.setAdapter(typeAdapter);
+                videoType.setSelection(0);
                 new AlertDialog.Builder(MainActivity.this).setTitle(getString(R.string.url)).setView(layout)
                         .setPositiveButton(getString(R.string.search), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                videoUrlET = (EditText) layout.findViewById(R.id.video_url);
-                                typeET = (EditText) layout.findViewById(R.id.type);
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Downloader downloader = new Downloader(MainActivity.this,videoUrlET.getText().toString(),typeET.getText().toString());
+                                        Downloader downloader = new Downloader(MainActivity.this,videoUrlET.getText().toString(),videoType.getSelectedItemPosition());
                                         downloader.download();
-                                        downloadHandler.sendEmptyMessage(1);
+                                        downloadHandler.sendEmptyMessage(DOWNLOAD_NEW);
                                     }
                                 }).start();
-
                             }
                 })
                 .setNegativeButton(getString(R.string.cancel), null).show();
             }
         });
-        /*videoUrlET = (EditText) findViewById(R.id.video_url);
-        typeET = (EditText) findViewById(R.id.type);
-        searchBtn = (Button) findViewById(R.id.search);
-
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Downloader.download(videoUrlET.getText().toString(),typeET.getText().toString());
-                    }
-                }).start();
-
-            }
-        });*/
-
     }
 
     @Override
@@ -300,12 +286,12 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
-
-    public Handler downloadHandler = new Handler(){
+    public static final int DOWNLOAD_NEW = 1;
+    Handler downloadHandler = new Handler(){
         public void handleMessage(Message msg){
             super.handleMessage(msg);
             switch (msg.what){
-                case 1:
+                case DOWNLOAD_NEW:
                     downloadListAdapter.notifyDataSetChanged();
                     break;
             }

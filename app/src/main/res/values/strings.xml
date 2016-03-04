@@ -40,4 +40,12 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="remove">Remove</string>
+    <string name="type_hd">超清</string>
+    <string name="type_s">高清</string>
+    <string name="type_n">标清</string>
+    <string-array name="type_array">
+        <item>@string/type_hd</item>
+        <item>@string/type_s</item>
+        <item>@string/type_n</item>
+    </string-array>
 </resources>

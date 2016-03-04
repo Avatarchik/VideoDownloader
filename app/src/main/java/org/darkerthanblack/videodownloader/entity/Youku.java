@@ -9,7 +9,7 @@ public class Youku implements VideoSite {
     }
 
     @Override
-    public Video getVideo(String url, String type) {
+    public Video getVideo(String url, int type) {
         return null;
     }
 }
