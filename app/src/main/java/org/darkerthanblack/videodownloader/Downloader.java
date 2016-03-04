@@ -9,6 +9,7 @@ import android.util.Log;
 import org.darkerthanblack.videodownloader.download.DownloadManager;
 import org.darkerthanblack.videodownloader.download.DownloadViewHolder;
 import org.darkerthanblack.videodownloader.entity.Bilibili;
+import org.darkerthanblack.videodownloader.entity.Tudou;
 import org.darkerthanblack.videodownloader.entity.Video;
 import org.darkerthanblack.videodownloader.entity.VideoSite;
 import org.darkerthanblack.videodownloader.entity.Youku;
@@ -42,6 +43,8 @@ public class Downloader {
             videoSite = new Bilibili();
         }else if(url.contains("youku")){
             videoSite = new Youku();
+        }else if(url.contains("tudou")){
+            videoSite = new Tudou();
         }else {
             System.out.print("Error");
         }
@@ -59,12 +62,14 @@ public class Downloader {
                 }
                 for(int i=0 ;i<fileUrl.size();i++) {
                     String tempFileUrl = fileUrl.get(i);
-                    String extName = ".flv";
-                    Matcher matcher = Pattern.compile("\\.[a-z0-9]{3,5}(?=\\?)").matcher(tempFileUrl);
-                    if (matcher.find()) {
-                        extName = matcher.group();
+                    if(url.contains("bilibili")) {
+                        String extName = ".flv";
+                        Matcher matcher = Pattern.compile("\\.[a-z0-9]{3,5}(?=\\?)").matcher(tempFileUrl);
+                        if (matcher.find()) {
+                            extName = matcher.group();
+                        }
+                        video.setExtName(extName);
                     }
-                    video.setExtName(extName);
                     try {
                         DownloadManager.getInstance().startDownload(tempFileUrl,video.getId()+"-"+i,downloadroot+File.separator+video.getId()+"-"+i+video.getExtName(),true,true,null);
                     } catch (DbException e) {
