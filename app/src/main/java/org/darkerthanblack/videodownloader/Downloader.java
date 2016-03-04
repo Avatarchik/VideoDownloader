@@ -66,7 +66,7 @@ public class Downloader {
                     }
                     video.setExtName(extName);
                     try {
-                        DownloadManager.getInstance().startDownload(tempFileUrl,video.getId()+"",downloadroot,true,true,null);
+                        DownloadManager.getInstance().startDownload(tempFileUrl,video.getId()+"-"+i,downloadroot+File.separator+video.getId()+"-"+i+video.getExtName(),true,true,null);
                     } catch (DbException e) {
                         e.printStackTrace();
                     }

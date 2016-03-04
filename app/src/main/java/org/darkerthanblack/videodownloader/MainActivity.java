@@ -76,6 +76,7 @@ public class MainActivity extends BaseActivity {
                                         downloader.download();
                                     }
                                 }).start();
+                                downloadList.deferNotifyDataSetChanged();
 
                             }
                 })
