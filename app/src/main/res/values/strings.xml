@@ -48,4 +48,5 @@
         <item>@string/type_s</item>
         <item>@string/type_n</item>
     </string-array>
+    <string name="failed">解析失败!</string>
 </resources>

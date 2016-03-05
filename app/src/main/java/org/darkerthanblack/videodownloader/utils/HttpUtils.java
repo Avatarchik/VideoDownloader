@@ -130,7 +130,12 @@ public class HttpUtils
                     in.close();
                     arrayOutputStream.close();
                     conn.disconnect();
-                    str = new String(arrayOutputStream.toByteArray(),"utf-8");
+                    if(urlStr.contains("sohu")){
+                        str = new String(arrayOutputStream.toByteArray(),"gbk");
+                    }else
+                    {
+                        str = new String(arrayOutputStream.toByteArray(),"utf-8");
+                    }
                 //正常流处理
                 }else{
                     InputStream in = conn.getInputStream();

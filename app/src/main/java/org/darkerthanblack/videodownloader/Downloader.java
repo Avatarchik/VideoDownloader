@@ -9,6 +9,8 @@ import android.util.Log;
 import org.darkerthanblack.videodownloader.download.DownloadManager;
 import org.darkerthanblack.videodownloader.download.DownloadViewHolder;
 import org.darkerthanblack.videodownloader.entity.Bilibili;
+import org.darkerthanblack.videodownloader.entity.CannotDownloadException;
+import org.darkerthanblack.videodownloader.entity.Sohu;
 import org.darkerthanblack.videodownloader.entity.Tudou;
 import org.darkerthanblack.videodownloader.entity.Video;
 import org.darkerthanblack.videodownloader.entity.VideoSite;
@@ -35,7 +37,7 @@ public class Downloader {
         this.type = type;
     }
 
-    public Video download(){
+    public Video download() throws CannotDownloadException {
         Video video = null;
         VideoSite videoSite = null;
         if(url.contains("bilibili")){
@@ -45,8 +47,10 @@ public class Downloader {
             videoSite = new Youku();
         }else if(url.contains("tudou")){
             videoSite = new Tudou();
+        }else if(url.contains("sohu")){
+            videoSite = new Sohu();
         }else {
-            System.out.print("Error");
+            throw new CannotDownloadException();
         }
         Log.v("Jay","videoType----->"+type);
         if(videoSite!=null){

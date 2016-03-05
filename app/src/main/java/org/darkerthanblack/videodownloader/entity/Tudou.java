@@ -4,6 +4,7 @@ import org.darkerthanblack.videodownloader.utils.HttpUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -34,20 +35,18 @@ public class Tudou implements VideoSite{
             String tempUrl = baseUrl + videoID;
             String tempResult = HttpUtils.doGet(tempUrl);
             matcher = Pattern.compile("(.*)(?=&s=0&e=)").matcher(tempResult);
-            if(matcher.find()){
-                Set tempSet = new HashSet<>();
-                for(int i=0;i<matcher.groupCount();i++){
-                    tempSet.add(matcher.group(i)+urlSuffix);
-                }
-                List<String> tempList = new ArrayList<>(tempSet);
-                v.setFileUrlList(tempList);
-                String extName = ".flv";
-                matcher = Pattern.compile("\\.[a-z0-9]{3,5}(?=&)").matcher(tempList.get(0));
-                if (matcher.find()) {
-                    extName = matcher.group();
-                }
-                v.setExtName(extName);
+            List<String> list = new ArrayList();
+            while(matcher.find()){
+                list.add(matcher.group() + urlSuffix);
             }
+            List<String> tempList = new ArrayList<>(new LinkedHashSet<>(list));
+            v.setFileUrlList(tempList);
+            String extName = ".flv";
+            matcher = Pattern.compile("\\.[a-z0-9]{3,5}(?=&)").matcher(tempList.get(0));
+            if (matcher.find()) {
+                extName = matcher.group();
+            }
+            v.setExtName(extName);
         }
         return v;
     }

@@ -28,6 +28,7 @@ import org.darkerthanblack.videodownloader.download.DownloadInfo;
 import org.darkerthanblack.videodownloader.download.DownloadManager;
 import org.darkerthanblack.videodownloader.download.DownloadState;
 import org.darkerthanblack.videodownloader.download.DownloadViewHolder;
+import org.darkerthanblack.videodownloader.entity.CannotDownloadException;
 import org.xutils.common.Callback;
 import org.xutils.ex.DbException;
 import org.xutils.view.annotation.Event;
@@ -77,7 +78,11 @@ public class MainActivity extends BaseActivity {
                                     @Override
                                     public void run() {
                                         Downloader downloader = new Downloader(MainActivity.this,videoUrlET.getText().toString(),videoType.getSelectedItemPosition());
-                                        downloader.download();
+                                        try {
+                                            downloader.download();
+                                        } catch (CannotDownloadException e) {
+                                            downloadHandler.sendEmptyMessage(DOWNLOAD_FAILED);
+                                        }
                                         downloadHandler.sendEmptyMessage(DOWNLOAD_NEW);
                                     }
                                 }).start();
@@ -287,12 +292,16 @@ public class MainActivity extends BaseActivity {
         }
     }
     public static final int DOWNLOAD_NEW = 1;
+    public static final int DOWNLOAD_FAILED = 2;
     Handler downloadHandler = new Handler(){
         public void handleMessage(Message msg){
             super.handleMessage(msg);
             switch (msg.what){
                 case DOWNLOAD_NEW:
                     downloadListAdapter.notifyDataSetChanged();
+                    break;
+                case DOWNLOAD_FAILED:
+                    Toast.makeText(MainActivity.this,getString(R.string.failed),Toast.LENGTH_LONG).show();
                     break;
             }
         }
